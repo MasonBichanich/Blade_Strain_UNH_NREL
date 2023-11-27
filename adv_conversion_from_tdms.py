@@ -10,7 +10,7 @@ from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
 
-path = "../../Data_Files/MODAQ/Fall_22_Blade_Strain/Vector_Velocity_Data_2/"
+path = "../../../Data_Files/MODAQ/Fall_22_Blade_Strain/Vector_Velocity_Data_2/"
 files = glob(path + "*.tdms")
 
 # allocation of the pre variety
