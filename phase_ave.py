@@ -12,7 +12,7 @@ from datetime import datetime
 
 ## loading in the data
 #path ='C:/Users/mason/OneDrive - USNH/Documents/Research/Data Analysis/NREL instumented blade/Data_Analysis_pats_structure/Data_Files/MODAQ/Vlink/Processed_Data/*'
-path = 'C:/Users/mb1536/OneDrive - USNH/Documents/Research/Data Analysis/NREL instumented blade/Data_Analysis_pats_structure/Data_Files/MODAQ/Vlink/Processed_Data/*'
+path = '../../../Data_Files/MODAQ/Vlink/Processed_Data/*'
 files = sorted(glob(path))
 v_8145 = pd.read_csv(files[0])
 v_28175 = pd.read_csv(files[1])
@@ -84,9 +84,9 @@ for i in range(0, len(peak_ind)):
 for j in range(8):
     for i in range(1, len(peak_ind)):
         if j < 4:
-            broken[j][i] = vlink_28175[peak_ind[i - 1]:peak_ind[i], j + 1]
+            broken[j][i] = v_28175[peak_ind[i - 1]:peak_ind[i], j + 1]
         else:
-            broken[j][i] = vlink_8145[peak_ind[i - 1]:peak_ind[i], j - 3]
+            broken[j][i] = v_8145[peak_ind[i - 1]:peak_ind[i], j - 3]
 
 # Now let's average these phases. They are all different lengths. First try will be to make them all the same length
 # and Nan the missing data

@@ -12,37 +12,15 @@ Created on Wed Aug 30 13:33:00 2023
 from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
-import mat73
 import math
 import scipy.io
 import pandas as pd
 from datetime import datetime
-#from my_funcs import *
+import my_funcs as my
 import pickle
 
-# path = "../../../../V_link/8145_Vlink/Raw Data/"
-# files = glob(path + "*.tdms")
 
-# # allocation of the pre variety
-# vlink_tdms = {}
-# DATA = {}
-# Vlink = [{} for _ in range(len(files))]
-# # reading all .tdms files, putting JUST the data into Vec
-# for i in range(0,len(files)): 
-#     try:
-#         vlink_tdms[i] = TdmsFile.read(files[i])
-#         DATA[i] = vlink_tdms[i]._channel_data
-#         indexed_keys = dict(enumerate(DATA[i].keys()))
-#         vlink = {}
-#         for j in range(0,len(DATA[i])):
-#             vlink[j] = DATA[i][indexed_keys[j]].data
-#         Vlink[i] = vlink
-#     except:
-#         print("Bad file")
-# # concatenating the data so we have continuous time series      
-# vlink_8145 = {}
-# for k in Vlink[2].keys():
-#   vlink_8145[k] = np.concatenate(list(vlink_8145[k] for vlink_8145 in Vlink))
+
 #%%
 file = 'Vector_UTC_PostQC.mat'
 
@@ -54,7 +32,7 @@ heading=105.05
 INS_X_VEL_heading_correction = -Vector[:,1]*math.sin(np.deg2rad(heading-90))-Vector[:,2]*math.sin(np.deg2rad(180-heading))
 INS_Y_VEL_heading_correction =  Vector[:,1]*math.cos(np.deg2rad(heading-90))-Vector[:,2]*math.cos(np.deg2rad(180-heading))
 
-speed_complex=(INS_X_VEL_heading_correction +INS_Y_VEL_heading_correction*1j)
+speed_complex=(INS_X_VEL_heading_correction + INS_Y_VEL_heading_correction*1j)
 direc_rad = np.angle(speed_complex)
 Speed_Direction = np.array([np.abs(speed_complex),np.rad2deg(direc_rad)])
 
@@ -98,13 +76,16 @@ for i in np.arange(0,8):
         v_8145.iloc[:,i+1] = v_8145.iloc[:,i+1]-v_8145.iloc[:,i+1].mean()
     else:
         v_28175.iloc[:,i-3] = v_28175.iloc[:,i-3]-v_28175.iloc[:,i-3].mean()
- 
-with open('strain_data.pkl','wb') as f:
-    pickle.dump([v_8145,v_28175],f)
+
+strain = pd.concat([v_8145,v_28175],axis = 1, ignore_index = True, sort = False)
+strain = strain.drop(strain.columns[[5]],axis=1)
+#%%
+# with open('strain_data.pkl','wb') as f:
+#     pickle.dump([strain],f)
 #%%
 Vector_date = np.zeros_like(Vector[:,0],dtype=object)
 for i in range(0,len(Vector[:,0])):
-    Vector_date[i] = (datenum2datetime(Vector[i,0]))
+    Vector_date[i] = my.matdatenum2datetime(Vector[i,0])
 
 #%%
 spin_v = np.logical_and(Vector_date >= time[0],
@@ -119,7 +100,7 @@ thrust = LCforce['Thrust_Force']
 
 LC_date = np.zeros_like(thrust_datenum,dtype=object)
 for i in range(0,len(thrust_datenum)):
-    LC_date[i] = datenum2datetime(thrust_datenum[i,0])
+    LC_date[i] = my.matdatenum2datetime(thrust_datenum[i,0])
 
 
 #%%
@@ -148,4 +129,9 @@ ax3.plot(time,v_28175['2'],'k')
 ax4.plot(LC_date[spin_thr],thrust[spin_thr])
 ax5.plot(time,v_28175['2'],'k')
 
-
+#%%
+with open('strain_plotting.pkl','wb') as f:
+    pickle.dump([Vector_date[spin_v],Current_Magnitude[spin_v],Current_Direction[spin_v],
+                 time,v_28175['2'],
+                 LC_date[spin_thr],thrust[spin_thr]],
+                f)

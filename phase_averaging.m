@@ -83,15 +83,15 @@ for j = 1:8
 end
 
 
-% check if it worked
-% for j = 1:8
-%     figure
-%     for i = 1:length(broken{1})
-%         plot(broken_time{i},table2array(broken{j}{i}))
-%         hold on
-%         title(num2str(j))
-%     end
-% end
+%% check if it worked
+for j = 1:8
+    figure
+    for i = 1:length(broken{1})
+        plot(broken_time{i},table2array(broken{j}{i}))
+        hold on
+        title(num2str(j))
+    end
+end
 %% figure for umerc
 figure
 for i = 1:length(broken{1})

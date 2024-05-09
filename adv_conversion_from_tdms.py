@@ -9,6 +9,7 @@ from nptdms import TdmsFile
 from glob import glob
 import numpy as np
 import matplotlib.pyplot as plt
+import pickle as pkl
 
 path = "../../../Data_Files/MODAQ/Fall_22_Blade_Strain/Vector_Velocity_Data_2/"
 files = glob(path + "*.tdms")
@@ -35,3 +36,7 @@ for k in Vec[0].keys():
 
 # just a quick check of x-velocity
 plt.plot(Vector[0],Vector[1],'.')
+plt.show()
+
+with open('ADV_data.pkl','wb') as f:
+    pkl.dump([Vector],f)

@@ -10,7 +10,7 @@ import numpy as np
 import math
 import scipy
 import matplotlib.pyplot as plt
-from my_funcs import *
+
 import scipy.stats as stats
 from datetime import datetime, timedelta
 from scipy.stats import chi2
@@ -41,7 +41,7 @@ def my_var(data):
     
     return var
 
-def my_std_filt(data,n,nor):
+def std_filt(data,n,nor):
     k = 0
     
     while k < nor:
@@ -113,7 +113,7 @@ def  lagcorr(xin,yin,nlag):
     corr = np.corrcoef(xlag,ylag)
     return corr 
 
-def my_reg(ts):
+def reg(ts):
     N = len(ts)
     x1 = np.ones(N+1)             #constant
     x2 = np.arange(0,N+1)/N     #linear
@@ -145,7 +145,7 @@ def my_reg(ts):
             Y[i] += A[j]*X[j,i]
     return Y,A
 
-def my_tidalreg(ts,t,tide):
+def tidalreg(ts,t,tide):
     N = len(ts)
     tide_int = np.interp(t,tide[:,0],tide[:,1])
     N_tide = len(tide_int)
@@ -180,7 +180,7 @@ def my_tidalreg(ts,t,tide):
             Y[i] += A[j]*X[j,i]
     return Y,A
 
-def my_tidal_harmonic(ts,t):
+def tidal_harmonic(ts,t):
     N = len(ts)
     tides_cos = np.cos(2*3.1415/(12.4*60*60)*t)
     tides_sin = np.sin(2*3.1415/(12.4*60*60)*t)
@@ -223,7 +223,7 @@ def datetime2matlabdn(dt):
    frac = (dt-datetime(dt.year,dt.month,dt.day,0,0,0)).seconds / (24.0 * 60.0 * 60.0)
    return mdn.toordinal() + frac
 
-def datenum2datetime(datenum):
+def matdatenum2datetime(datenum):
     """
     Convert Matlab datenum into Python datetime.
 
@@ -310,7 +310,7 @@ def f_spectra(ts, dt, nbands, nens, alpha):
 
     for k in range(nens):
         tsk = ts[k * K:(k + 1) * K]
-        tsk = tsk - np.mean(tsk)
+        tsk = tsk - np.nanmean(tsk)
         Gj = (1 / K) * np.fft.fft(tsk)
         G_pro = np.abs(Gj) ** 2
         Sj[:, k] = 2 * K * dt * G_pro
